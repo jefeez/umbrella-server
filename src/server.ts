@@ -13,8 +13,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors({ origin: process.env.CORS }));
 app.use(morgan('dev'));
 
-app.use(handling);
 app.use('/api', api);
+app.use(handling);
 
-const PORT = process.env;
+const { PORT } = process.env;
 app.listen(PORT, () => console.log(`server running on port ${PORT}`));
