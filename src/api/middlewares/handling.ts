@@ -13,6 +13,8 @@ export default (error: Error, req: Request, res: Response, next: NextFunction) =
   } else if (error.name === 'HttpExcept') {
     const obj = JSON.parse(error.message);
     res.status(obj.status).json({ status: obj.status, messages: obj.message });
+  } else if (error.name === 'JsonWebTokenError') {
+    res.status(401).json({ status: 401, message: error.message });
   }
 
   console.log('HANDLING', error.name);

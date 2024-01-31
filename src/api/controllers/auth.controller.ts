@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { z } from 'zod';
 import authService from '../services/auth.service';
+import { jwt } from '../../utils/helper';
 
 const signup = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -28,7 +29,17 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
     });
     const body = schemas.parse(req.body);
     const entity = await authService.signup({ ...body, avatar: 'avatar.png' });
-    res.status(200).json(entity);
+    if (entity) {
+      const token = jwt.sign(entity.id);
+      res.status(200).json({
+        user: {
+          ...entity,
+          id: undefined,
+          email: undefined,
+        },
+        token,
+      });
+    }
   } catch (error) {
     next(error);
   }
@@ -53,7 +64,17 @@ const signin = async (req: Request, res: Response, next: NextFunction) => {
     });
     const body = schemas.parse(req.body);
     const entity = await authService.signin(body);
-    res.status(200).json(entity);
+    if (entity) {
+      const token = jwt.sign(entity.id);
+      res.status(200).json({
+        user: {
+          ...entity,
+          id: undefined,
+          email: undefined,
+        },
+        token,
+      });
+    }
   } catch (error) {
     next(error);
   }
@@ -61,7 +82,7 @@ const signin = async (req: Request, res: Response, next: NextFunction) => {
 
 const auth = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    res.status(200).json({});
+    res.status(200).json(req.user);
   } catch (error) {
     next(error);
   }
