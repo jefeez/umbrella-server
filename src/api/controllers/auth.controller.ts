@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { z } from 'zod';
 import authService from '../services/auth.service';
 import { jwt } from '../../utils/helper';
+import cloudinaryService from '../services/cloudinary.service';
 
 const signup = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -88,4 +89,21 @@ const auth = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-export default { signin, signup, auth };
+const avatar = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    if (req.file) {
+      const url = await cloudinaryService.uploader(req);
+      if (url) {
+        const user = await authService.avatar(req.user.id, url);
+        res.status(200).json({ user: { ...user, id: undefined, email: undefined } });
+      }
+    }
+  } catch (error: any) {
+    if (error.error.name === 'TimeoutError') {
+      res.status(400).json({ status: 400, message: error.error.message });
+    }
+    next(error);
+  }
+};
+
+export default { signin, signup, auth, avatar };

@@ -16,4 +16,9 @@ const findOne = async (where: Prisma.UserWhereUniqueInput) => {
   return entity;
 };
 
-export default { create, findAll, findOne };
+const update = async (where: Prisma.UserWhereUniqueInput, data: Prisma.UserUpdateInput) => {
+  const entity = await User.update({ where, data });
+  return entity;
+};
+
+export default { create, findAll, findOne, update };
