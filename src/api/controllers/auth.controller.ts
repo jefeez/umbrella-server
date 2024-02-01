@@ -13,7 +13,7 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
           required_error: 'username is a required field',
           invalid_type_error: 'username must be a string',
         })
-        .min(5, 'must be 4 or more characters long')
+        .min(3, 'must be 3 or more characters long')
         .max(10, 'Must be 10 or fewer characters long'),
       email: z
         .string({
