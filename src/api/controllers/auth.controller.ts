@@ -83,7 +83,11 @@ const signin = async (req: Request, res: Response, next: NextFunction) => {
 
 const auth = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    res.status(200).json(req.user);
+    const { id } = req.user;
+    const entity = await authService.auth(id);
+    if (entity) {
+      res.status(200).json({ user: { ...entity, email: undefined, id: undefined } });
+    }
   } catch (error) {
     next(error);
   }

@@ -55,10 +55,18 @@ const signin = async (data: Omit<IUser, 'id' | 'avatar' | 'username'>) => {
   return null;
 };
 
+const auth = async (id: string) => {
+  const user = await existing({ id }, { message: 'no user found with this id', status: 401 });
+  if (user) {
+    return { ...user, password: undefined };
+  }
+  return null;
+};
+
 const avatar = async (id: string, url: string) => {
   await existing({ id }, { message: 'user not found', status: 404 });
   const user = await userRepository.update({ id }, { avatar: url });
   return { ...user, password: undefined };
 };
 
-export default { signup, signin, avatar };
+export default { signup, signin, avatar, auth };
