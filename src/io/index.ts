@@ -1,6 +1,11 @@
-import { Socket } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 
-export default (socket: Socket) => {
-  console.log('SOCKET: ', socket.id);
-  console.log('USER: ', socket.user.id);
+export default async (io: Server, socket: Socket) => {
+  console.log('CONNECTION ID', socket.id);
+  // console.log('CONNECTION USER: ', socket.user.id);
+
+  socket.on('disconnect', async () => {
+    console.log('DISCONNECTION ID', socket.id);
+    // console.log('DISCONNECTION USER: ', socket.user.id);
+  });
 };

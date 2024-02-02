@@ -4,9 +4,11 @@ import morgan from 'morgan';
 import dotenv from 'dotenv';
 import http from 'http';
 import { Server } from 'socket.io';
+
 import api from './api';
 import handling from './api/middlewares/handling';
 import socket from './io';
+import authenticated from './io/middlewares/authenticated';
 
 const app = express();
 const server = http.createServer(app);
@@ -19,7 +21,8 @@ app.use(morgan('dev'));
 
 const io = new Server(server, { cors: { origin: process.env.CORS } });
 
-io.on('connection', socket);
+// io.use(authenticated);
+io.on('connection', s => socket(io, s));
 
 app.use((request, response, next) => {
   request.io = io;
@@ -30,4 +33,9 @@ app.use('/api', api);
 app.use(handling);
 
 const { PORT } = process.env;
-server.listen(PORT, () => console.log(`server running on port ${PORT}`));
+
+const init = async () => {
+  server.listen(PORT, () => console.log(`server running on port ${PORT}`));
+};
+
+init();
