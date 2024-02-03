@@ -103,8 +103,9 @@ const avatar = async (req: Request, res: Response, next: NextFunction) => {
       }
     }
   } catch (error: any) {
-    if (error.error.name === 'TimeoutError') {
-      res.status(400).json({ status: 400, message: error.error.message });
+    console.log(error);
+    if (error) {
+      res.status(400).json({ status: 400, messages: 'Invalid image file' });
     }
     next(error);
   }
