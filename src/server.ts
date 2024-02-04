@@ -9,6 +9,7 @@ import api from './api';
 import handling from './api/middlewares/handling';
 import socket from './io';
 import authenticated from './io/middlewares/authenticated';
+import { redis } from './services/redis';
 
 const app = express();
 const server = http.createServer(app);
@@ -21,7 +22,7 @@ app.use(morgan('dev'));
 
 const io = new Server(server, { cors: { origin: process.env.CORS } });
 
-// io.use(authenticated);
+io.use(authenticated);
 io.on('connection', s => socket(io, s));
 
 app.use((request, response, next) => {
@@ -35,6 +36,7 @@ app.use(handling);
 const { PORT } = process.env;
 
 const init = async () => {
+  redis.on('error', err => console.log('Redis Client Error', err)).connect();
   server.listen(PORT, () => console.log(`server running on port ${PORT}`));
 };
 

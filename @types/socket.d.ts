@@ -5,6 +5,9 @@ declare module 'socket.io' {
     handshake: Handshake;
     user: {
       id: string;
+      avatar: string;
+      username: string;
+      email: string;
     };
   }
 }
