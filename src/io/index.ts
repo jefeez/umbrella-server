@@ -34,6 +34,7 @@ export default async (io: Server, socket: Socket) => {
       by: { avatar: socket.user.avatar, username: socket.user.username },
     };
     socket.emit('get-message', payload);
+    socket.broadcast.emit('get-message', payload);
   });
 
   socket.on('disconnect', async () => {
