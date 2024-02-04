@@ -30,6 +30,8 @@ export default async (io: Server, socket: Socket) => {
     const payload = {
       id: v4(),
       body,
+      into: false,
+      exit: false,
       hour: `${hour.getHours()}:${hour.getMinutes()}:${hour.getSeconds()}`,
       by: { avatar: socket.user.avatar, username: socket.user.username },
     };
@@ -37,7 +39,21 @@ export default async (io: Server, socket: Socket) => {
     socket.broadcast.emit('get-message', payload);
   });
 
+  socket.broadcast.emit('get-message', {
+    id: v4(),
+    into: true,
+    exit: false,
+    by: { avatar: socket.user.avatar, username: socket.user.username },
+  });
+
   socket.on('disconnect', async () => {
+    socket.broadcast.emit('get-message', {
+      id: v4(),
+      into: false,
+      exit: true,
+      by: { avatar: socket.user.avatar, username: socket.user.username },
+    });
+
     await redis.HDEL('app', socket.user.id);
 
     const onlines = await redis.HVALS('app');
